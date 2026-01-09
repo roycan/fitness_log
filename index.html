@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <title>FitTrack - Personal Fitness Tracker</title>
+  <meta name="description" content="A lightweight, privacy-focused fitness tracker. Track weight, steps, workouts, and nutrition - all stored locally on your device.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <h1 class="logo">FitTrack</h1>
+      <button class="icon-btn" id="settingsBtn" aria-label="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Quick Add Card -->
+    <div class="card" id="quickAddCard">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Quick Add for Today
+        </h2>
+      </div>
+      <div class="card-content">
+        <div class="preset-buttons">
+          <button class="btn btn-outline btn-sm" data-preset="Pushups">💪 Pushups</button>
+          <button class="btn btn-outline btn-sm" data-preset="Split Squats">🦵 Split Squats</button>
+          <button class="btn btn-outline btn-sm" data-preset="Rows">🏋️ Rows</button>
+          <button class="btn btn-outline btn-sm" data-preset="Stepper">🚶 Stepper</button>
+          <button class="btn btn-outline btn-sm" data-preset="Yoga">🧘 Yoga</button>
+        </div>
+        <button class="btn btn-primary btn-full" id="addFullEntryBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Full Entry
+        </button>
+      </div>
+    </div>
+
+    <!-- Today's Progress -->
+    <div class="card" id="dailySummaryCard">
+      <div class="card-header">
+        <h2 class="card-title">Today's Progress</h2>
+        <span class="text-muted" id="todayDate"></span>
+      </div>
+      <div class="card-content">
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v-4a4 4 0 0 1 4-4 4 4 0 0 1 4 4v4m-8 0h8m-8 0v4m8-4v4"/><path d="M12 16v-4a4 4 0 0 1 4-4 4 4 0 0 1 4 4v4m-8 0h8m-8 0v4m8-4v4"/></svg>
+              Steps
+            </div>
+            <div class="stat-value" id="todaySteps">0</div>
+            <div class="progress-bar"><div class="progress-fill" id="stepsProgress"></div></div>
+            <div class="stat-hint">Goal: <span id="stepGoalDisplay">10,000</span></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-label">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+              Protein
+              <button class="tooltip-trigger" id="palmTooltip" aria-label="What are palms?">?</button>
+            </div>
+            <div class="stat-value"><span id="todayProtein">0</span> <small>palms</small></div>
+            <div class="progress-bar"><div class="progress-fill" id="proteinProgress"></div></div>
+            <div class="stat-hint">Target: <span id="proteinTargetDisplay">6</span> palms</div>
+          </div>
+        </div>
+        <div class="workout-status">
+          <div class="workout-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
+            Workout
+          </div>
+          <div class="workout-badge" id="workoutStatus">
+            <span class="badge badge-muted">Not yet</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weight Tracking -->
+    <div class="card" id="weightCard">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="3"/><path d="M6.5 8a2 2 0 0 0-1.9 1.4L2 18h20l-2.6-8.6A2 2 0 0 0 17.5 8Z"/></svg>
+          Weight Tracking
+        </h2>
+      </div>
+      <div class="card-content">
+        <div class="weight-stats">
+          <div>
+            <div class="text-muted">Current</div>
+            <div class="weight-value" id="currentWeight">—</div>
+          </div>
+          <div>
+            <div class="text-muted" id="avgLabel">7-Day Avg</div>
+            <div class="weight-avg" id="rollingAvg">No data</div>
+            <div class="text-warning text-sm" id="avgWarning"></div>
+          </div>
+        </div>
+        <div class="chart-container">
+          <canvas id="weightChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly Steps -->
+    <div class="card" id="stepsCard">
+      <div class="card-header">
+        <h2 class="card-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16v-4a4 4 0 0 1 4-4 4 4 0 0 1 4 4v4m-8 0h8m-8 0v4m8-4v4"/><path d="M12 16v-4a4 4 0 0 1 4-4 4 4 0 0 1 4 4v4m-8 0h8m-8 0v4m8-4v4"/></svg>
+          Weekly Steps
+        </h2>
+      </div>
+      <div class="card-content">
+        <div class="chart-container chart-container-sm">
+          <canvas id="stepsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly Summary -->
+    <div class="card" id="weeklySummaryCard">
+      <div class="card-header">
+        <h2 class="card-title">Weekly Summary</h2>
+        <span class="text-muted" id="weekLabel"></span>
+      </div>
+      <div class="card-content">
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="text-muted">Avg Weight</div>
+            <div class="summary-value" id="weeklyAvgWeight">—</div>
+            <div class="summary-change" id="weightChange"></div>
+          </div>
+          <div class="summary-item">
+            <div class="text-muted">Workouts</div>
+            <div class="summary-value"><span id="weeklyWorkouts">0</span> <small>/ 7 days</small></div>
+          </div>
+          <div class="summary-item">
+            <div class="text-muted">Avg Protein</div>
+            <div class="summary-value"><span id="weeklyProtein">0</span> <small>palms/day</small></div>
+          </div>
+          <div class="summary-item">
+            <div class="text-muted">Adherence</div>
+            <div class="summary-value"><span id="weeklyAdherence">0</span>%</div>
+            <div class="text-muted text-sm"><span id="daysTracked">0</span>/7 days tracked</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Toggle -->
+    <div class="tabs">
+      <button class="tab active" data-view="calendar">📅 Calendar</button>
+      <button class="tab" data-view="list">📋 List</button>
+    </div>
+
+    <!-- Calendar View -->
+    <div class="card view-panel" id="calendarView">
+      <div class="card-content">
+        <div class="calendar-nav">
+          <button class="icon-btn" id="prevMonth" aria-label="Previous month">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+          </button>
+          <span class="calendar-month" id="calendarMonth"></span>
+          <button class="icon-btn" id="nextMonth" aria-label="Next month">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>
+          </button>
+        </div>
+        <div class="calendar-grid">
+          <div class="calendar-header">
+            <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+          </div>
+          <div class="calendar-days" id="calendarDays"></div>
+        </div>
+        <div class="calendar-legend">
+          <span><span class="legend-dot legend-weight"></span> Weight logged</span>
+          <span><span class="legend-dot legend-workout"></span> Workout done</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- List View -->
+    <div class="card view-panel hidden" id="listView">
+      <div class="card-content" id="entryList">
+        <div class="empty-state">No entries yet. Start tracking today!</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>All data stored locally in your browser</p>
+      <p>Your privacy is protected — nothing leaves your device</p>
+    </footer>
+  </main>
+
+  <!-- Entry Form Modal -->
+  <div class="modal-overlay hidden" id="entryModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="entryModalTitle">Add Entry</h3>
+        <button class="icon-btn" id="closeEntryModal" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <form id="entryForm">
+        <input type="hidden" id="entryDate">
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label for="weightInput">Weight (<span id="weightUnitLabel">kg</span>)</label>
+            <input type="number" id="weightInput" step="0.1" placeholder="70.5">
+            <div class="form-error" id="weightError"></div>
+          </div>
+          <div class="form-group">
+            <label for="waistInput">Waist (<span id="waistUnitLabel">cm</span>) <small class="text-muted">(weekly)</small></label>
+            <input type="number" id="waistInput" step="0.1" placeholder="80">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="stepsInput">Steps</label>
+          <input type="number" id="stepsInput" placeholder="10000">
+          <div class="form-error" id="stepsError"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-label">
+            <input type="checkbox" id="workoutCheck">
+            <span>Completed workout</span>
+          </label>
+        </div>
+
+        <div class="form-group hidden" id="workoutNotesGroup">
+          <label for="workoutNotes">Workout Notes</label>
+          <div class="preset-buttons preset-buttons-sm">
+            <button type="button" class="btn btn-outline btn-xs" data-workout-preset="Pushups">Pushups</button>
+            <button type="button" class="btn btn-outline btn-xs" data-workout-preset="Split Squats">Split Squats</button>
+            <button type="button" class="btn btn-outline btn-xs" data-workout-preset="Rows">Rows</button>
+            <button type="button" class="btn btn-outline btn-xs" data-workout-preset="Stepper">Stepper</button>
+            <button type="button" class="btn btn-outline btn-xs" data-workout-preset="Yoga">Yoga</button>
+          </div>
+          <textarea id="workoutNotes" rows="2" placeholder="What did you do?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>
+            Protein Palms
+            <button type="button" class="tooltip-trigger" id="palmTooltip2" aria-label="What are palms?">?</button>
+          </label>
+          <div class="protein-grid">
+            <div class="protein-item">
+              <span class="protein-label">Breakfast</span>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" data-action="dec" data-target="proteinBreakfast">−</button>
+                <input type="number" id="proteinBreakfast" value="0" min="0" max="10">
+                <button type="button" class="stepper-btn" data-action="inc" data-target="proteinBreakfast">+</button>
+              </div>
+            </div>
+            <div class="protein-item">
+              <span class="protein-label">Lunch</span>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" data-action="dec" data-target="proteinLunch">−</button>
+                <input type="number" id="proteinLunch" value="0" min="0" max="10">
+                <button type="button" class="stepper-btn" data-action="inc" data-target="proteinLunch">+</button>
+              </div>
+            </div>
+            <div class="protein-item">
+              <span class="protein-label">Dinner</span>
+              <div class="stepper">
+                <button type="button" class="stepper-btn" data-action="dec" data-target="proteinDinner">−</button>
+                <input type="number" id="proteinDinner" value="0" min="0" max="10">
+                <button type="button" class="stepper-btn" data-action="inc" data-target="proteinDinner">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="notesInput">Notes</label>
+          <textarea id="notesInput" rows="2" placeholder="How are you feeling today?"></textarea>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger hidden" id="deleteEntryBtn">Delete</button>
+          <button type="submit" class="btn btn-primary">Save Entry</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay hidden" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Settings</h3>
+        <button class="icon-btn" id="closeSettingsModal" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="settings-content">
+        <div class="form-group">
+          <label for="stepGoalSetting">Daily Step Goal</label>
+          <input type="number" id="stepGoalSetting" value="10000">
+        </div>
+        <div class="form-group">
+          <label for="proteinTargetSetting">Protein Target (palms/day)</label>
+          <input type="number" id="proteinTargetSetting" value="6">
+        </div>
+        <div class="form-group">
+          <label for="weightUnitSetting">Weight Unit</label>
+          <select id="weightUnitSetting">
+            <option value="kg">Kilograms (kg)</option>
+            <option value="lb">Pounds (lb)</option>
+          </select>
+        </div>
+        
+        <div class="settings-divider"></div>
+        <h4 class="settings-section-title">Data Management</h4>
+        
+        <div class="button-row">
+          <button class="btn btn-outline btn-sm" id="exportBtn">📋 Copy Backup</button>
+          <button class="btn btn-outline btn-sm" id="importBtn">📥 Import</button>
+        </div>
+        
+        <button class="btn btn-danger btn-full" id="resetBtn">🗑️ Reset All Data</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Modal -->
+  <div class="modal-overlay hidden" id="importModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Import Data</h3>
+        <button class="icon-btn" id="closeImportModal" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="form-group">
+        <p class="text-muted">Paste your backup JSON data below. This will merge with existing data.</p>
+        <textarea id="importData" rows="8" placeholder='{"entries": [...], "settings": {...}}'></textarea>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="cancelImportBtn">Cancel</button>
+        <button class="btn btn-primary" id="confirmImportBtn">Import</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Palm Tooltip Modal -->
+  <div class="modal-overlay hidden" id="palmModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title">What are "Protein Palms"?</h3>
+        <button class="icon-btn" id="closePalmModal" aria-label="Close">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+      <div class="palm-content">
+        <p>A <strong>"palm"</strong> is a simple way to measure protein portions without weighing food. One palm = the size and thickness of your palm (excluding fingers).</p>
+        
+        <h4>Quick Calibration Guide</h4>
+        <ol>
+          <li>For 2-3 days, weigh your protein portions with a food scale</li>
+          <li>Compare the weight to your palm size</li>
+          <li>Most people find 1 palm ≈ 20-30g of protein</li>
+        </ol>
+        
+        <h4>Examples of 1 Palm</h4>
+        <ul>
+          <li>🍗 1 chicken breast (palm-sized)</li>
+          <li>🥩 1 small steak</li>
+          <li>🐟 1 fish fillet</li>
+          <li>🥚 3 whole eggs</li>
+          <li>🫘 1 cup cooked beans/lentils</li>
+        </ul>
+        
+        <p class="text-muted"><strong>Tip:</strong> Aim for 1-2 palms per meal for most adults.</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="closePalmBtn">Got it!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Dialog -->
+  <div class="modal-overlay hidden" id="confirmModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title" id="confirmTitle">Confirm</h3>
+      </div>
+      <p id="confirmMessage"></p>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="confirmCancel">Cancel</button>
+        <button class="btn btn-danger" id="confirmOk">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

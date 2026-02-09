@@ -206,6 +206,58 @@ function importData(jsonStr) {
   }
 }
 
+/**
+ * Download data as JSON file
+ * @param {string} filename - Optional filename (defaults to timestamped)
+ */
+function downloadBackup(filename = null) {
+  const data = exportData();
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const defaultFilename = `fittrack-backup-${formatDate(new Date())}.json`;
+  const finalFilename = filename || defaultFilename;
+  
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = finalFilename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Import data from file
+ * @param {File} file - File object to import
+ * @returns {Promise<boolean>} Success status
+ */
+function importFromFile(file) {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const success = importData(e.target.result);
+      resolve(success);
+    };
+    reader.onerror = () => resolve(false);
+    reader.readAsText(file);
+  });
+}
+
+/**
+ * Switch import method between file and text
+ * @param {string} method - 'file' or 'text'
+ */
+function switchImportMethod(method) {
+  // Update tab active states
+  document.querySelectorAll('.import-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.method === method);
+  });
+  // Show/hide method sections
+  document.getElementById('importFileMethod').classList.toggle('hidden', method !== 'file');
+  document.getElementById('importTextMethod').classList.toggle('hidden', method !== 'text');
+}
+
 // ============================================
 // Utility Functions
 // ============================================
@@ -1211,9 +1263,20 @@ function initEventListeners() {
     });
   });
   
+  document.getElementById('downloadBtn').addEventListener('click', () => {
+    downloadBackup();
+  });
+  
+  document.getElementById('importFileBtn').addEventListener('click', () => {
+    document.getElementById('settingsModal').classList.add('hidden');
+    document.getElementById('importModal').classList.remove('hidden');
+    switchImportMethod('file');
+  });
+  
   document.getElementById('importBtn').addEventListener('click', () => {
     document.getElementById('settingsModal').classList.add('hidden');
     document.getElementById('importModal').classList.remove('hidden');
+    switchImportMethod('text');
   });
   
   document.getElementById('closeImportModal').addEventListener('click', () => {
@@ -1234,6 +1297,29 @@ function initEventListeners() {
     } else {
       alert('Failed to import data. Please check the JSON format.');
     }
+  });
+  
+  // File input change handler
+  document.getElementById('importFile').addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const success = await importFromFile(file);
+    if (success) {
+      document.getElementById('importModal').classList.add('hidden');
+      e.target.value = ''; // Reset file input
+      updateUI();
+      alert('Data imported successfully!');
+    } else {
+      alert('Failed to import data. Please check the file format.');
+    }
+  });
+  
+  // Import tab switching
+  document.querySelectorAll('.import-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      switchImportMethod(tab.dataset.method);
+    });
   });
   
   // Reset data

@@ -334,9 +334,20 @@
         <div class="settings-divider"></div>
         <h4 class="settings-section-title">Data Management</h4>
         
-        <div class="button-row">
-          <button class="btn btn-outline btn-sm" id="exportBtn">📋 Copy Backup</button>
-          <button class="btn btn-outline btn-sm" id="importBtn">📥 Import</button>
+        <div class="settings-subsection">
+          <p class="text-muted text-sm">Export Backup</p>
+          <div class="button-row">
+            <button class="btn btn-outline btn-sm" id="exportBtn">📋 Copy to Clipboard</button>
+            <button class="btn btn-outline btn-sm" id="downloadBtn">💾 Download File</button>
+          </div>
+        </div>
+        
+        <div class="settings-subsection">
+          <p class="text-muted text-sm">Import Backup</p>
+          <div class="button-row">
+            <button class="btn btn-outline btn-sm" id="importFileBtn">📁 Import from File</button>
+            <button class="btn btn-outline btn-sm" id="importBtn">📥 Import from Text</button>
+          </div>
         </div>
         
         <button class="btn btn-danger btn-full" id="resetBtn">🗑️ Reset All Data</button>
@@ -357,12 +368,26 @@
         </button>
       </div>
       <div class="form-group">
-        <p class="text-muted">Paste your backup JSON data below. This will merge with existing data.</p>
-        <textarea id="importData" rows="8" placeholder='{"entries": [...], "settings": {...}}'></textarea>
+        <p class="text-muted">Choose import method. This will merge with existing data.</p>
+        <div class="import-tabs">
+          <button class="import-tab active" data-method="file">📁 Upload File</button>
+          <button class="import-tab" data-method="text">📝 Paste Text</button>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" id="cancelImportBtn">Cancel</button>
-        <button class="btn btn-primary" id="confirmImportBtn">Import</button>
+      <div class="import-method" id="importFileMethod">
+        <div class="form-group">
+          <input type="file" id="importFile" accept=".json">
+          <p class="text-muted text-sm">Select a FitTrack backup JSON file</p>
+        </div>
+      </div>
+      <div class="import-method hidden" id="importTextMethod">
+        <div class="form-group">
+          <textarea id="importData" rows="8" placeholder='{"entries": [...], "settings": {...}}'></textarea>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" id="cancelImportBtn">Cancel</button>
+          <button class="btn btn-primary" id="confirmImportBtn">Import</button>
+        </div>
       </div>
     </div>
   </div>

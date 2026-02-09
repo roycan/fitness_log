@@ -92,14 +92,27 @@ This approach provides immediate feedback while encouraging consistent tracking.
 
 ### Export (Backup)
 
+**Option 1 - Download File:**
 1. Click the ⚙️ Settings button
-2. Click "📋 Copy Backup"
+2. Click "💾 Download File"
+3. A JSON file (e.g., `fittrack-backup-2025-02-09.json`) will be saved to your device
+
+**Option 2 - Copy to Clipboard:**
+1. Click the ⚙️ Settings button
+2. Click "📋 Copy to Clipboard"
 3. Paste the JSON somewhere safe (notes app, text file, etc.)
 
 ### Import (Restore)
 
+**Option 1 - Upload File:**
 1. Click the ⚙️ Settings button
-2. Click "📥 Import"
+2. Click "📁 Import from File"
+3. Select your backup JSON file
+4. Data will be merged with existing entries
+
+**Option 2 - Paste Text:**
+1. Click the ⚙️ Settings button
+2. Click "📥 Import from Text"
 3. Paste your backup JSON
 4. Click "Import"
 
